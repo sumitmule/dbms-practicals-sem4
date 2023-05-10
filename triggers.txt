@@ -1,0 +1,28 @@
+------- before update ------
+
+create trigger before_update
+before update on employee
+for each row
+begin
+insert into emp_before_update
+set no = old.no,
+name = old.name,
+joining = old.joining,
+post = old.post,
+salary = old.salary;
+end;
+//
+
+
+---- similar for before delete ----
+
+
+create trigger t2
+before delete on employee
+for each row
+begin
+insert into new_table
+set x = old.x,
+y=old.y;
+end;
+//

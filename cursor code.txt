@@ -1,0 +1,39 @@
+- change delimiter //
+
+create procedure topsal()
+begin
+
+declare empname varchar(15);
+declare sal int(10);
+declare finished int default 0;
+declare salary cursor for select name,salary from employee order by salary desc limit 3;
+
+declare continue handler for not found set finished=1;
+
+open salary;
+lp:loop
+	fetch salary into empname,sal;
+	if finished=1 then leave lp;
+	end if;
+	select empname,sal;
+end loop;
+close salary;
+end;
+//
+
+
+
+- change delimiter ;
+- call topsal();
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,31 @@
+create procedure result(in sub varchar(15))
+begin
+
+declare A int default 0;
+declare B int default 0;
+declare C int default 0;
+declare D int default 0;
+declare E int default 0;
+declare curr int default 0;
+declare finished int default 0;
+declare percent cursor for select perc from scores where course=sub;
+
+declare continue handler for not found set finished=1;
+
+
+
+open percent;
+lp:loop
+fetch percent into curr;
+if finished=1 then leave lp;
+elseif curr >= 80 then set A := A+1;
+elseif curr >= 70 then set B := B+1;
+elseif curr >= 60 then set C := C+1;
+elseif curr >= 50 then set D := D+1;
+elseif curr < 50 then set E := E+1;
+end if;
+end loop;
+close percent;
+select A,B,C,D,E;
+end;
+//

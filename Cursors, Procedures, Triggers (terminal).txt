@@ -1,0 +1,742 @@
+mysql> show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| items            |
+| lowstock         |
+| orders           |
++------------------+
+3 rows in set (0.00 sec)
+
+mysql> create table employee (no int(5), name varchar(15), joining year, post varchar(15), salary int(10));
+Query OK, 0 rows affected, 2 warnings (0.03 sec)
+
+mysql> insert into employee values (1,"raj","2021","manager",90000),(2,"prakash","2018","accountant",60000),(3,"priya","2022","clerk",30000),(4,"viraj","2021","sde",70000),(5,"varun","2022","sde",70000);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from employee
+    -> ;
++------+---------+---------+------------+--------+
+| no   | name    | joining | post       | salary |
++------+---------+---------+------------+--------+
+|    1 | raj     |    2021 | manager    |  90000 |
+|    2 | prakash |    2018 | accountant |  60000 |
+|    3 | priya   |    2022 | clerk      |  30000 |
+|    4 | viraj   |    2021 | sde        |  70000 |
+|    5 | varun   |    2022 | sde        |  70000 |
++------+---------+---------+------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select * from employee limit 2;
++------+---------+---------+------------+--------+
+| no   | name    | joining | post       | salary |
++------+---------+---------+------------+--------+
+|    1 | raj     |    2021 | manager    |  90000 |
+|    2 | prakash |    2018 | accountant |  60000 |
++------+---------+---------+------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure topsal()
+    -> begin
+    ->
+    -> declare
+    ->  empname employee.name%type;
+    ->  sal employee.sal%type;
+    ->  finished int default 0;
+    ->  cursor salary is select name,salary from employee order by salary desc limit 3;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> open salary;
+    -> lp:loop
+    ->  fetch salary into empname,sal;
+    ->  if finished=1 then leave lp;
+    ->  end if;
+    ->  select empname,sal;
+    -> end loop;
+    -> close salary;
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'employee.name%type;
+        sal employee.sal%type;
+        finished int default 0;
+        cursor sal' at line 5
+mysql> create procedure topsal()
+    -> begin
+    ->
+    -> declare empname employee.name%type;
+    -> declare sal employee.sal%type;
+    -> declare finished int default 0;
+    -> declare cursor salary is select name,salary from employee order by salary desc limit 3;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> open salary;
+    -> lp:loop
+    ->  fetch salary into empname,sal;
+    ->  if finished=1 then leave lp;
+    ->  end if;
+    ->  select empname,sal;
+    -> end loop;
+    -> close salary;
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'employee.name%type;
+declare sal employee.sal%type;
+declare finished int default ' at line 4
+mysql> create procedure topsal()
+    -> begin
+    ->
+    -> declare empname varchar(15);
+    -> declare sal int(10);
+    -> declare finished int default 0;
+    -> declare cursor salary is select name,salary from employee order by salary desc limit 3;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> open salary;
+    -> lp:loop
+    ->  fetch salary into empname,sal;
+    ->  if finished=1 then leave lp;
+    ->  end if;
+    ->  select empname,sal;
+    -> end loop;
+    -> close salary;
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'cursor salary is select name,salary from employee order by salary desc limit 3;
+' at line 7
+mysql> create procedure topsal()
+    -> begin
+    ->
+    -> declare empname varchar(15);
+    -> declare sal int(10);
+    -> declare finished int default 0;
+    -> declare salary cursor for select name,salary from employee order by salary desc limit 3;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> open salary;
+    -> lp:loop
+    ->  fetch salary into empname,sal;
+    ->  if finished=1 then leave lp;
+    ->  end if;
+    ->  select empname,sal;
+    -> end loop;
+    -> close salary;
+    -> end;
+    -> //
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> delimiter ;
+mysql> call topsal();
++---------+-------+
+| empname | sal   |
++---------+-------+
+| raj     | 90000 |
++---------+-------+
+1 row in set (0.01 sec)
+
++---------+-------+
+| empname | sal   |
++---------+-------+
+| viraj   | 70000 |
++---------+-------+
+1 row in set (0.02 sec)
+
++---------+-------+
+| empname | sal   |
++---------+-------+
+| varun   | 70000 |
++---------+-------+
+1 row in set (0.02 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> edit salary;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'edit salary' at line 1
+mysql> edit topsal;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'edit topsal' at line 1
+mysql> edit topsal();
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'edit topsal()' at line 1
+mysql> alter procedure topsal();
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '()' at line 1
+mysql> drop procedure topsal;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> call topsal();
+ERROR 1305 (42000): PROCEDURE testdb.topsal does not exist
+mysql> delimiter //
+mysql> create procedure topsal();
+    -> begin
+    ->
+    -> declare x varchar(15);
+    -> declare y int(10);
+    -> declare finished int default 0;
+    -> declare salary cursor for select name,salary from employee order by salary limit 3;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> open salary;
+    -> lp:loop
+    -> fetch salary into x,y;
+    -> if finished=1 then leave lp;
+    -> end if;
+    -> select x,y;
+    -> end loop;
+    ->
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ';
+begin
+
+declare x varchar(15);
+declare y int(10);
+declare finished int default ' at line 1
+mysql> create procedure topsal()
+    -> begin
+    ->
+    -> declare x varchar(15);
+    -> declare y int(10);
+    -> declare finished int default 0;
+    -> declare salary cursor for select name,salary from employee order by salary limit 3;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> open salary;
+    -> lp:loop
+    -> fetch salary into x,y;
+    -> if finished=1 then leave lp;
+    -> end if;
+    -> select x,y;
+    -> end loop;
+    ->
+    -> end;
+    -> //
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> call topsal()
+    -> ;
+    -> ^C
+mysql> delimiter //
+mysql> delimiter ;
+mysql> call topsal();
++-------+-------+
+| x     | y     |
++-------+-------+
+| priya | 30000 |
++-------+-------+
+1 row in set (0.00 sec)
+
++---------+-------+
+| x       | y     |
++---------+-------+
+| prakash | 60000 |
++---------+-------+
+1 row in set (0.01 sec)
+
++-------+-------+
+| x     | y     |
++-------+-------+
+| viraj | 70000 |
++-------+-------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> alter procedure topsal;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call topsal();
++-------+-------+
+| x     | y     |
++-------+-------+
+| priya | 30000 |
++-------+-------+
+1 row in set (0.00 sec)
+
++---------+-------+
+| x       | y     |
++---------+-------+
+| prakash | 60000 |
++---------+-------+
+1 row in set (0.01 sec)
+
++-------+-------+
+| x     | y     |
++-------+-------+
+| viraj | 70000 |
++-------+-------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter //
+mysql> alter procedure topsal
+    -> begin
+    ->
+    -> declare x varchar(15);
+    -> declare y int(10);
+    -> declare finished int default 0;
+    -> declare salary cursor for select name,salary from employee order by salary desc limit 3;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> open salary;
+    -> lp:loop
+    -> fetch salary into x,y;
+    -> if finished=1 then leave lp;
+    -> end if;
+    -> select x,y;
+    -> end loop;
+    ->
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'begin
+
+declare x varchar(15);
+declare y int(10);
+declare finished int default 0;' at line 2
+mysql> drop procedure topsal;
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create procedure topsal()
+    -> begin
+    ->
+    -> declare x varchar(15);
+    -> declare y int(10);
+    -> declare finished int default 0;
+    -> declare salary cursor for select name,salary from employee order by salary desc limit 3;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> open salary;
+    -> lp:loop
+    -> fetch salary into x,y;
+    -> if finished=1 then leave lp;
+    -> end if;
+    -> select x,y;
+    -> end loop;
+    ->
+    -> end;
+    -> //
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> delimiter ;
+mysql> call topsal();
++------+-------+
+| x    | y     |
++------+-------+
+| raj  | 90000 |
++------+-------+
+1 row in set (0.00 sec)
+
++-------+-------+
+| x     | y     |
++-------+-------+
+| viraj | 70000 |
++-------+-------+
+1 row in set (0.01 sec)
+
++-------+-------+
+| x     | y     |
++-------+-------+
+| varun | 70000 |
++-------+-------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> show procedures;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'procedures' at line 1
+mysql> show procedure;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> delimiter ;
+mysql> show procedures;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'procedures' at line 1
+mysql> show procedure;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> select * from employee;
++------+---------+---------+------------+--------+
+| no   | name    | joining | post       | salary |
++------+---------+---------+------------+--------+
+|    1 | raj     |    2021 | manager    |  90000 |
+|    2 | prakash |    2018 | accountant |  60000 |
+|    3 | priya   |    2022 | clerk      |  30000 |
+|    4 | viraj   |    2021 | sde        |  70000 |
+|    5 | varun   |    2022 | sde        |  70000 |
++------+---------+---------+------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> create table emp_before_update (no int(5), name varchar(15), joining year, post varchar(15), salary int(10));
+Query OK, 0 rows affected, 2 warnings (0.02 sec)
+
+mysql> delimiter //
+mysql> create trigger before_update
+    -> before update on employee
+    -> for each row
+    -> begin
+    -> insert into emp_before_update
+    -> set no = old.no,
+    -> name = old.name,
+    -> joining = old.year,
+    -> post = old.post,
+    -> salary = old.salary;
+    -> end;
+    -> //
+ERROR 1054 (42S22): Unknown column 'year' in 'OLD'
+mysql> create trigger before_update
+    -> before update on employee
+    -> for each row
+    -> begin
+    -> insert into emp_before_update
+    -> set no = old.no,
+    -> name = old.name,
+    -> joining = old.joining,
+    -> post = old.post,
+    -> salary = old.salary;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+mysql> select * from employee;
++------+---------+---------+------------+--------+
+| no   | name    | joining | post       | salary |
++------+---------+---------+------------+--------+
+|    1 | raj     |    2021 | manager    |  90000 |
+|    2 | prakash |    2018 | accountant |  60000 |
+|    3 | priya   |    2022 | clerk      |  30000 |
+|    4 | viraj   |    2021 | sde        |  70000 |
+|    5 | varun   |    2022 | sde        |  70000 |
++------+---------+---------+------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> update employee set post="accountant" where no=2;
+Query OK, 0 rows affected (0.01 sec)
+Rows matched: 1  Changed: 0  Warnings: 0
+
+mysql> select * from employee;
++------+---------+---------+------------+--------+
+| no   | name    | joining | post       | salary |
++------+---------+---------+------------+--------+
+|    1 | raj     |    2021 | manager    |  90000 |
+|    2 | prakash |    2018 | accountant |  60000 |
+|    3 | priya   |    2022 | clerk      |  30000 |
+|    4 | viraj   |    2021 | sde        |  70000 |
+|    5 | varun   |    2022 | sde        |  70000 |
++------+---------+---------+------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> update employee set post="accountant" where no=3;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from employee;
++------+---------+---------+------------+--------+
+| no   | name    | joining | post       | salary |
++------+---------+---------+------------+--------+
+|    1 | raj     |    2021 | manager    |  90000 |
+|    2 | prakash |    2018 | accountant |  60000 |
+|    3 | priya   |    2022 | accountant |  30000 |
+|    4 | viraj   |    2021 | sde        |  70000 |
+|    5 | varun   |    2022 | sde        |  70000 |
++------+---------+---------+------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select * from emp_before_update;
++------+---------+---------+------------+--------+
+| no   | name    | joining | post       | salary |
++------+---------+---------+------------+--------+
+|    2 | prakash |    2018 | accountant |  60000 |
+|    3 | priya   |    2022 | clerk      |  30000 |
++------+---------+---------+------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> show triggers;
++---------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------+--------+------------------------+--------------------------------------------+----------------+----------------------+----------------------+--------------------+
+| Trigger       | Event  | Table    | Statement
+
+                                             | Timing | Created                | sql_mode                                   | Definer        | character_set_client | collation_connection | Database Collation |
++---------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------+--------+------------------------+--------------------------------------------+----------------+----------------------+----------------------+--------------------+
+| before_update | UPDATE | employee | begin
+insert into emp_before_update
+set no = old.no,
+name = old.name,
+joining = old.joining,
+post = old.post,
+salary = old.salary;
+end | BEFORE | 2023-05-10 21:07:51.96 | STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION | root@localhost | cp850                | cp850_general_ci     | utf8mb4_0900_ai_ci |
++---------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------+--------+------------------------+--------------------------------------------+----------------+----------------------+----------------------+--------------------+
+1 row in set (0.01 sec)
+
+mysql> drop trigger before_update;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> show triggers;
+Empty set (0.00 sec)
+
+mysql> select * from emp_before_update;
++------+---------+---------+------------+--------+
+| no   | name    | joining | post       | salary |
++------+---------+---------+------------+--------+
+|    2 | prakash |    2018 | accountant |  60000 |
+|    3 | priya   |    2022 | clerk      |  30000 |
++------+---------+---------+------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> truncate table emp_before_update;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from emp_before_update;
+Empty set (0.00 sec)
+
+mysql> create table scores(roll int(5), course varchar(10), perc int(3));
+Query OK, 0 rows affected, 2 warnings (0.01 sec)
+
+mysql> insert into scores(101, "dbms", 90),(101,"ads",67),(101,"
+toc",83);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '101, "dbms", 90),(101,"ads",67),(101,"toc",83)' at line 1
+mysql> insert into scores values (101, "dbms", 90),(101,"ads",67),(101,"toc",83);
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into scores values (102, "dbms", 45),(102,"ads",89),(102,"toc",53);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into scores values (103, "dbms", 95),(103,"ads",49),(103,"toc",73);
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from scores;
++------+--------+------+
+| roll | course | perc |
++------+--------+------+
+|  101 | dbms   |   90 |
+|  101 | ads    |   67 |
+|  101 | toc    |   83 |
+|  102 | dbms   |   45 |
+|  102 | ads    |   89 |
+|  102 | toc    |   53 |
+|  103 | dbms   |   95 |
+|  103 | ads    |   49 |
+|  103 | toc    |   73 |
++------+--------+------+
+9 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure result(in sub varchar(15))
+    -> begin
+    ->
+    -> declare A int default 0;
+    -> declare B int default 0;
+    -> declare C int default 0;
+    -> declare D int default 0;
+    -> declare E int default 0;
+    -> declare curr int default 0;
+    -> declare finished int default 0;
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> declare percent cursor as select perc from scores where course=sub;
+    ->
+    -> open percent;
+    -> lp:loop
+    -> fetch percent into curr;
+    -> if finished=1 then leave lp;
+    -> elseif curr >= 80 set A := A+1;
+    -> elseif curr >= 70 set B := B+1;
+    -> elseif curr >= 60 set C := C+1;
+    -> elseif curr >= 50 set D := D+1;
+    -> elseif curr < 50 set E := E+1;
+    -> end loop;
+    -> close percent;
+    -> select A,B,C,D,E;
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'as select perc from scores where course=sub;
+
+open percent;
+lp:loop
+fetch percen' at line 13
+mysql> create procedure result(in sub varchar(15))
+    -> begin
+    ->
+    -> declare A int default 0;
+    -> declare B int default 0;
+    -> declare C int default 0;
+    -> declare D int default 0;
+    -> declare E int default 0;
+    -> declare curr int default 0;
+    -> declare finished int default 0;
+    -> declare continue handler for not found set finished=1;
+    ->
+    -> declare percent cursor for select perc from scores where course=sub;
+    ->
+    -> open percent;
+    -> lp:loop
+    -> fetch percent into curr;
+    -> if finished=1 then leave lp;
+    -> elseif curr >= 80 set A := A+1;
+    -> elseif curr >= 70 set B := B+1;
+    -> elseif curr >= 60 set C := C+1;
+    -> elseif curr >= 50 set D := D+1;
+    -> elseif curr < 50 set E := E+1;
+    -> end loop;
+    -> close percent;
+    -> select A,B,C,D,E;
+    -> end;
+    -> //
+ERROR 1338 (42000): Cursor declaration after handler declaration
+mysql> create procedure result(in sub varchar(15))
+    -> begin
+    ->
+    -> declare A int default 0;
+    -> declare B int default 0;
+    -> declare C int default 0;
+    -> declare D int default 0;
+    -> declare E int default 0;
+    -> declare curr int default 0;
+    -> declare finished int default 0;
+    -> declare percent cursor for select perc from scores where course=sub;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    ->
+    ->
+    -> open percent;
+    -> lp:loop
+    -> fetch percent into curr;
+    -> if finished=1 then leave lp;
+    -> elseif curr >= 80 set A := A+1;
+    -> elseif curr >= 70 set B := B+1;
+    -> elseif curr >= 60 set C := C+1;
+    -> elseif curr >= 50 set D := D+1;
+    -> elseif curr < 50 set E := E+1;
+    -> end loop;
+    -> close percent;
+    -> select A,B,C,D,E;
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'set A := A+1;
+elseif curr >= 70 set B := B+1;
+elseif curr >= 60 set C := C+1;
+el' at line 21
+mysql> create procedure result(in sub varchar(15))
+    -> begin
+    ->
+    -> declare A int default 0;
+    -> declare B int default 0;
+    -> declare C int default 0;
+    -> declare D int default 0;
+    -> declare E int default 0;
+    -> declare curr int default 0;
+    -> declare finished int default 0;
+    -> declare percent cursor for select perc from scores where course=sub;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    ->
+    ->
+    -> open percent;
+    -> lp:loop
+    -> fetch percent into curr;
+    -> if finished=1 then leave lp;
+    -> elseif curr >= 80 then set A := A+1;
+    -> elseif curr >= 70 then set B := B+1;
+    -> elseif curr >= 60 then set C := C+1;
+    -> elseif curr >= 50 then set D := D+1;
+    -> elseif curr < 50 then set E := E+1;
+    -> end loop;
+    -> close percent;
+    -> select A,B,C,D,E;
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'loop;
+close percent;
+select A,B,C,D,E;
+end' at line 26
+mysql> create procedure result(in sub varchar(15))
+    -> begin
+    ->
+    -> declare A int default 0;
+    -> declare B int default 0;
+    -> declare C int default 0;
+    -> declare D int default 0;
+    -> declare E int default 0;
+    -> declare curr int default 0;
+    -> declare finished int default 0;
+    -> declare percent cursor for select perc from scores where course=sub;
+    ->
+    -> declare continue handler for not found set finished=1;
+    ->
+    ->
+    ->
+    -> open percent;
+    -> lp:loop
+    -> fetch percent into curr;
+    -> if finished=1 then leave lp;
+    -> elseif curr >= 80 then set A := A+1;
+    -> elseif curr >= 70 then set B := B+1;
+    -> elseif curr >= 60 then set C := C+1;
+    -> elseif curr >= 50 then set D := D+1;
+    -> elseif curr < 50 then set E := E+1;
+    -> end if;
+    -> end loop;
+    -> close percent;
+    -> select A,B,C,D,E;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call result("ads");
+    -> //
++------+------+------+------+------+
+| A    | B    | C    | D    | E    |
++------+------+------+------+------+
+|    1 |    0 |    1 |    0 |    1 |
++------+------+------+------+------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from scores;
+    -> //
++------+--------+------+
+| roll | course | perc |
++------+--------+------+
+|  101 | dbms   |   90 |
+|  101 | ads    |   67 |
+|  101 | toc    |   83 |
+|  102 | dbms   |   45 |
+|  102 | ads    |   89 |
+|  102 | toc    |   53 |
+|  103 | dbms   |   95 |
+|  103 | ads    |   49 |
+|  103 | toc    |   73 |
++------+--------+------+
+9 rows in set (0.00 sec)
+
+mysql> delimiter ;
+mysql> call result("dbms");
++------+------+------+------+------+
+| A    | B    | C    | D    | E    |
++------+------+------+------+------+
+|    2 |    0 |    0 |    0 |    1 |
++------+------+------+------+------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call result("toc");
++------+------+------+------+------+
+| A    | B    | C    | D    | E    |
++------+------+------+------+------+
+|    1 |    1 |    0 |    1 |    0 |
++------+------+------+------+------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)

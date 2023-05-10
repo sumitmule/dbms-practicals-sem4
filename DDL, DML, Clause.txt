@@ -1,0 +1,520 @@
+C:\Users\HP>mysql -u root -p
+Enter password: **********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 10
+Server version: 8.0.31 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| emp                |
+| information_schema |
+| mysql              |
+| pbl_db             |
+| performance_schema |
+| sys                |
+| testdb             |
++--------------------+
+7 rows in set (0.00 sec)
+
+mysql> use testdb;
+Database changed
+mysql> create table items ( pid int(3), name varchar(15), quantity int(3), seller varchar(15));
+Query OK, 0 rows affected, 2 warnings (0.01 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| items            |
++------------------+
+1 row in set (0.01 sec)
+
+mysql> desc items;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pid      | int         | YES  |     | NULL    |       |
+| name     | varchar(15) | YES  |     | NULL    |       |
+| quantity | int         | YES  |     | NULL    |       |
+| seller   | varchar(15) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> rename table items to shop;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| shop             |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> rename table shop as items;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'as items' at line 1
+mysql> rename table shop to items;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table temp( ids int(2));
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> insert into temp values( (1),(2),(10));
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> insert into temp values (1),(2),(10);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from temp;
++------+
+| ids  |
++------+
+|    1 |
+|    2 |
+|   10 |
++------+
+3 rows in set (0.00 sec)
+
+mysql> truncate table temp;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> desc temp;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| ids   | int  | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
+1 row in set (0.00 sec)
+
+mysql> select * from temp;
+Empty set (0.00 sec)
+
+mysql> drop table temp;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| items            |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from items;
+Empty set (0.00 sec)
+
+mysql> alter table items add column tempcol int(7);
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 1
+
+mysql> desc items;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pid      | int         | YES  |     | NULL    |       |
+| name     | varchar(15) | YES  |     | NULL    |       |
+| quantity | int         | YES  |     | NULL    |       |
+| seller   | varchar(15) | YES  |     | NULL    |       |
+| tempcol  | int         | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> alter table items alter column tempcol varchar(2);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'varchar(2)' at line 1
+mysql> alter table items modify column tempcol varchar(2);
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc items;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pid      | int         | YES  |     | NULL    |       |
+| name     | varchar(15) | YES  |     | NULL    |       |
+| quantity | int         | YES  |     | NULL    |       |
+| seller   | varchar(15) | YES  |     | NULL    |       |
+| tempcol  | varchar(2)  | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> rename table items to ito;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| ito              |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> rename table ito to items;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> alter table items rename column tempcol to newtemp;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc items;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pid      | int         | YES  |     | NULL    |       |
+| name     | varchar(15) | YES  |     | NULL    |       |
+| quantity | int         | YES  |     | NULL    |       |
+| seller   | varchar(15) | YES  |     | NULL    |       |
+| newtemp  | varchar(2)  | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> alter table items drop column newtemp;
+Query OK, 0 rows affected (0.00 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc items;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pid      | int         | YES  |     | NULL    |       |
+| name     | varchar(15) | YES  |     | NULL    |       |
+| quantity | int         | YES  |     | NULL    |       |
+| seller   | varchar(15) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> insert into items values (1, "camera", 9, "sony"),(5, "lens", 4, "gm"),(3, "laptop", 15, "dell"),(9, "ps5", 7, "s
+ony");
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from items;
++------+--------+----------+--------+
+| pid  | name   | quantity | seller |
++------+--------+----------+--------+
+|    1 | camera |        9 | sony   |
+|    5 | lens   |        4 | gm     |
+|    3 | laptop |       15 | dell   |
+|    9 | ps5    |        7 | sony   |
++------+--------+----------+--------+
+4 rows in set (0.00 sec)
+
+mysql> select name from items where quantity > 5;
++--------+
+| name   |
++--------+
+| camera |
+| laptop |
+| ps5    |
++--------+
+3 rows in set (0.00 sec)
+
+mysql> select name from items where seller="sony";
++--------+
+| name   |
++--------+
+| camera |
+| ps5    |
++--------+
+2 rows in set (0.00 sec)
+
+mysql> insert into items values (69, "tempitem", 18, "anna");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from items;
++------+----------+----------+--------+
+| pid  | name     | quantity | seller |
++------+----------+----------+--------+
+|    1 | camera   |        9 | sony   |
+|    5 | lens     |        4 | gm     |
+|    3 | laptop   |       15 | dell   |
+|    9 | ps5      |        7 | sony   |
+|   69 | tempitem |       18 | anna   |
++------+----------+----------+--------+
+5 rows in set (0.00 sec)
+
+mysql> delete from items where seller="anna";
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from items;
++------+--------+----------+--------+
+| pid  | name   | quantity | seller |
++------+--------+----------+--------+
+|    1 | camera |        9 | sony   |
+|    5 | lens   |        4 | gm     |
+|    3 | laptop |       15 | dell   |
+|    9 | ps5    |        7 | sony   |
++------+--------+----------+--------+
+4 rows in set (0.00 sec)
+
+mysql> insert into items values (69, "tempitem", 18, "anna");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> update items set name="temp",pid=6 where pid=69;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from items;
++------+--------+----------+--------+
+| pid  | name   | quantity | seller |
++------+--------+----------+--------+
+|    1 | camera |        9 | sony   |
+|    5 | lens   |        4 | gm     |
+|    3 | laptop |       15 | dell   |
+|    9 | ps5    |        7 | sony   |
+|    6 | temp   |       18 | anna   |
++------+--------+----------+--------+
+5 rows in set (0.00 sec)
+
+mysql> delete from items where seller="anna";
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from items where quantity>5 group by seller;
++------+--------+----------+--------+
+| pid  | name   | quantity | seller |
++------+--------+----------+--------+
+|    1 | camera |        9 | sony   |
+|    3 | laptop |       15 | dell   |
++------+--------+----------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select count(pid),seller from items where quantity>5 group by seller;
++------------+--------+
+| count(pid) | seller |
++------------+--------+
+|          2 | sony   |
+|          1 | dell   |
++------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select * from items;
++------+--------+----------+--------+
+| pid  | name   | quantity | seller |
++------+--------+----------+--------+
+|    1 | camera |        9 | sony   |
+|    5 | lens   |        4 | gm     |
+|    3 | laptop |       15 | dell   |
+|    9 | ps5    |        7 | sony   |
++------+--------+----------+--------+
+4 rows in set (0.00 sec)
+
+mysql> update table items set seller="dell" where pid=5;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'table items set seller="dell" where pid=5' at line 1
+mysql> update items set seller="dell" where pid=5;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from items;
++------+--------+----------+--------+
+| pid  | name   | quantity | seller |
++------+--------+----------+--------+
+|    1 | camera |        9 | sony   |
+|    5 | lens   |        4 | dell   |
+|    3 | laptop |       15 | dell   |
+|    9 | ps5    |        7 | sony   |
++------+--------+----------+--------+
+4 rows in set (0.00 sec)
+
+mysql> select count(pid),seller from items where quantity>5 group by seller;
++------------+--------+
+| count(pid) | seller |
++------------+--------+
+|          2 | sony   |
+|          1 | dell   |
++------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select count(pid),seller from items where quantity>3 group by seller;
++------------+--------+
+| count(pid) | seller |
++------------+--------+
+|          2 | sony   |
+|          2 | dell   |
++------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select sum(quantity),seller from items group by seller;
++---------------+--------+
+| sum(quantity) | seller |
++---------------+--------+
+|            16 | sony   |
+|            19 | dell   |
++---------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select sum(quantity),seller from items group by seller sort by sum;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'sort by sum' at line 1
+mysql> select sum(quantity),seller from items group by seller order by sum;
+ERROR 1054 (42S22): Unknown column 'sum' in 'order clause'
+mysql> select sum(quantity),seller from items group by seller order by quantity;
++---------------+--------+
+| sum(quantity) | seller |
++---------------+--------+
+|            19 | dell   |
+|            16 | sony   |
++---------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select sum(quantity),seller from items where quantity>5 group by seller;
++---------------+--------+
+| sum(quantity) | seller |
++---------------+--------+
+|            16 | sony   |
+|            15 | dell   |
++---------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select sum(quantity),seller from items where quantity>5 group by seller having quantity<16;
+ERROR 1054 (42S22): Unknown column 'quantity' in 'having clause'
+mysql> select sum(quantity),seller from items where quantity>5 group by seller having sum<16;
+ERROR 1054 (42S22): Unknown column 'sum' in 'having clause'
+mysql> select sum(quantity),seller from items where quantity>5 group by seller having sum(quantity)<16;
++---------------+--------+
+| sum(quantity) | seller |
++---------------+--------+
+|            15 | dell   |
++---------------+--------+
+1 row in set (0.00 sec)
+
+mysql> select sum(quantity),seller from items where quantity>5 group by seller having pid<5;
+ERROR 1054 (42S22): Unknown column 'pid' in 'having clause'
+mysql> select * from items;
++------+--------+----------+--------+
+| pid  | name   | quantity | seller |
++------+--------+----------+--------+
+|    1 | camera |        9 | sony   |
+|    5 | lens   |        4 | dell   |
+|    3 | laptop |       15 | dell   |
+|    9 | ps5    |        7 | sony   |
++------+--------+----------+--------+
+4 rows in set (0.00 sec)
+
+mysql> create view fillitems on items as select pid,quanityt from items where quantity<5;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'on items as select pid,quanityt from items where quantity<5' at line 1
+mysql> create view fillitems as select pid,quanityt from items where quantity<5;
+ERROR 1054 (42S22): Unknown column 'quanityt' in 'field list'
+mysql> create view fillitems as select pid,quantity from items where quantity<5;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| fillitems        |
+| items            |
++------------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from fillitems;
++------+----------+
+| pid  | quantity |
++------+----------+
+|    5 |        4 |
++------+----------+
+1 row in set (0.00 sec)
+
+mysql> insert into items values (10, "charger", 1, "mi");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from items;
++------+---------+----------+--------+
+| pid  | name    | quantity | seller |
++------+---------+----------+--------+
+|    1 | camera  |        9 | sony   |
+|    5 | lens    |        4 | dell   |
+|    3 | laptop  |       15 | dell   |
+|    9 | ps5     |        7 | sony   |
+|   10 | charger |        1 | mi     |
++------+---------+----------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select * from fillitems;
++------+----------+
+| pid  | quantity |
++------+----------+
+|    5 |        4 |
+|   10 |        1 |
++------+----------+
+2 rows in set (0.00 sec)
+
+mysql> create index ids on items(pid);
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc items;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pid      | int         | YES  | MUL | NULL    |       |
+| name     | varchar(15) | YES  |     | NULL    |       |
+| quantity | int         | YES  |     | NULL    |       |
+| seller   | varchar(15) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> create unique index ids on items(pid);
+ERROR 1061 (42000): Duplicate key name 'ids'
+mysql> alter table items drop index ids;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> create unique index ids on items(pid);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc items;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pid      | int         | YES  | UNI | NULL    |       |
+| name     | varchar(15) | YES  |     | NULL    |       |
+| quantity | int         | YES  |     | NULL    |       |
+| seller   | varchar(15) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> alter table items update column pid int(5) auto increment;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'update column pid int(5) auto increment' at line 1
+mysql> alter table items modify column pid int(5) auto increment;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'auto increment' at line 1
+mysql> alter table items modify column pid int(5) auto_increment;
+Query OK, 5 rows affected, 1 warning (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 1
+
+mysql> desc items;
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| pid      | int         | NO   | PRI | NULL    | auto_increment |
+| name     | varchar(15) | YES  |     | NULL    |                |
+| quantity | int         | YES  |     | NULL    |                |
+| seller   | varchar(15) | YES  |     | NULL    |                |
++----------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> insert into items(name,quantity,seller) values ("temp", 11, "anna");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from table;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'table' at line 1
+mysql> select * from items;
++-----+---------+----------+--------+
+| pid | name    | quantity | seller |
++-----+---------+----------+--------+
+|   1 | camera  |        9 | sony   |
+|   3 | laptop  |       15 | dell   |
+|   5 | lens    |        4 | dell   |
+|   9 | ps5     |        7 | sony   |
+|  10 | charger |        1 | mi     |
+|  11 | temp    |       11 | anna   |
++-----+---------+----------+--------+
+6 rows in set (0.00 sec)
