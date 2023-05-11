@@ -1,0 +1,493 @@
+test> show dbs
+admin         40.00 KiB
+blog         108.00 KiB
+config        60.00 KiB
+local         72.00 KiB
+testdb       272.00 KiB
+todo_app     144.00 KiB
+urlShortner   72.00 KiB
+test> use testdb
+switched to db testdb
+testdb> show collections
+aggResults
+courses
+Employee
+totals
+universities
+testdb> db.createCollection(cities)
+ReferenceError: cities is not defined
+testdb> db.createCollection("cities")
+{ ok: 1 }
+testdb> db.cities.insertOne({ name : "Pune", scale : 3, weather: "Sunny", pop: "1cr"})
+{
+  acknowledged: true,
+  insertedId: ObjectId("645a83d236362769dbde5b42")
+}
+testdb> desc cities
+Uncaught:
+SyntaxError: Missing semicolon. (1:4)
+
+> 1 | desc cities
+    |     ^
+  2 |
+
+testdb> db.cities.explain()
+Explainable(testdb.cities)
+testdb> show collections
+aggResults
+cities
+courses
+Employee
+totals
+universities
+testdb> db.aggResult.find()
+
+testdb> db.aggResult.drop()
+false
+testdb> drop aggResult
+Uncaught:
+SyntaxError: Missing semicolon. (1:4)
+
+> 1 | drop aggResult
+    |     ^
+  2 |
+
+testdb> db.aggResults.drop()
+true
+testdb> show collections
+cities
+courses
+Employee
+totals
+universities
+testdb> db.cities.insertMany({ name : "Mumbai", scale : 2, weather: "Humid", pop: "5cr"}, {name: "Nagpur", scale: 5, weather: "Dry", pop: "0.1cr"})
+MongoInvalidArgumentError: Argument "docs" must be an array of documents
+testdb> db.cities.insertMany([{ name : "Mumbai", scale : 2, weather: "Humid", pop: "5cr"}, {name: "Nagpur", scale: 5, weather: "Dry", pop: "0.1cr"}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("645a857836362769dbde5b43"),
+    '1': ObjectId("645a857836362769dbde5b44")
+  }
+}
+testdb> db.cities.deleteOne({name : "Mumbai"})
+{ acknowledged: true, deletedCount: 1 }
+testdb> show dbs
+admin         40.00 KiB
+blog         108.00 KiB
+config        60.00 KiB
+local         72.00 KiB
+testdb       304.00 KiB
+todo_app     144.00 KiB
+urlShortner   72.00 KiB
+testdb> use tempbase
+switched to db tempbase
+tempbase> db.drop()
+TypeError: db.drop is not a function
+tempbase> drop tempbase
+Uncaught:
+SyntaxError: Missing semicolon. (1:4)
+
+> 1 | drop tempbase
+    |     ^
+  2 |
+
+tempbase> tempbase.drop()
+ReferenceError: tempbase is not defined
+tempbase> db.dropDatabase()
+{ ok: 1, dropped: 'tempbase' }
+tempbase> show dbs
+admin         40.00 KiB
+blog         108.00 KiB
+config        72.00 KiB
+local         72.00 KiB
+testdb       304.00 KiB
+todo_app     144.00 KiB
+urlShortner   72.00 KiB
+tempbase> use testdb
+switched to db testdb
+testdb> show collections;
+cities
+courses
+Employee
+totals
+universities
+testdb> db.Employee.find()
+[
+  {
+    _id: ObjectId("643a3e47c5537f658258f0b9"),
+    name: 'nisha',
+    dept: 'comp',
+    sal: 32000
+  },
+  {
+    _id: ObjectId("643a3e67c5537f658258f0bb"),
+    name: 'pooja',
+    dept: 'comp',
+    sal: 40000
+  },
+  {
+    _id: ObjectId("643a3e73c5537f658258f0bc"),
+    name: 'it',
+    dept: 'it',
+    sal: 37000
+  },
+  {
+    _id: ObjectId("643a3e81c5537f658258f0bd"),
+    name: 'rosh',
+    dept: 'it',
+    sal: 32000
+  },
+  {
+    _id: ObjectId("643a3e89c5537f658258f0be"),
+    name: 'rutu',
+    dept: 'etc',
+    sal: 35000
+  }
+]
+testdb> db.universities.find()
+[
+  {
+    _id: ObjectId("643a35f0c5537f658258f0b2"),
+    country: 'India',
+    city: 'Pune',
+    name: 'VIIT',
+    location: { type: 'Point', coordinates: [ -5.6722512, 17, 40.9607792 ] },
+    students: [
+      { year: 2014, number: 24774 },
+      { year: 2015, number: 23166 },
+      { year: 2016, number: 21913 },
+      { year: 2017, number: 21715 }
+    ]
+  },
+  {
+    _id: ObjectId("643a388ac5537f658258f0b7"),
+    country: 'India',
+    city: 'Mumbai',
+    name: 'BitsPillani',
+    location: { type: 'Point', coordinates: [ -5.6691191, 17, 40.9631732 ] },
+    students: [
+      { year: 2014, number: 4788 },
+      { year: 2015, number: 4821 },
+      { year: 2016, number: 6550 },
+      { year: 2017, number: 6125 }
+    ]
+  },
+  {
+    _id: ObjectId("643a3963c5537f658258f0b8"),
+    country: 'India',
+    city: 'Mumbai',
+    name: 'BitsPillani',
+    location: { type: 'Point', coordinates: [ -5.6691191, 17, 40.9631732 ] },
+    students: [
+      { year: 2014, number: 4788 },
+      { year: 2015, number: 4821 },
+      { year: 2016, number: 6550 },
+      { year: 2017, number: 6125 }
+    ]
+  }
+]
+testdb> db.universities.deleteOne({cities:"Mumbai"})
+{ acknowledged: true, deletedCount: 0 }
+testdb> db.universities.find()
+[
+  {
+    _id: ObjectId("643a35f0c5537f658258f0b2"),
+    country: 'India',
+    city: 'Pune',
+    name: 'VIIT',
+    location: { type: 'Point', coordinates: [ -5.6722512, 17, 40.9607792 ] },
+    students: [
+      { year: 2014, number: 24774 },
+      { year: 2015, number: 23166 },
+      { year: 2016, number: 21913 },
+      { year: 2017, number: 21715 }
+    ]
+  },
+  {
+    _id: ObjectId("643a388ac5537f658258f0b7"),
+    country: 'India',
+    city: 'Mumbai',
+    name: 'BitsPillani',
+    location: { type: 'Point', coordinates: [ -5.6691191, 17, 40.9631732 ] },
+    students: [
+      { year: 2014, number: 4788 },
+      { year: 2015, number: 4821 },
+      { year: 2016, number: 6550 },
+      { year: 2017, number: 6125 }
+    ]
+  },
+  {
+    _id: ObjectId("643a3963c5537f658258f0b8"),
+    country: 'India',
+    city: 'Mumbai',
+    name: 'BitsPillani',
+    location: { type: 'Point', coordinates: [ -5.6691191, 17, 40.9631732 ] },
+    students: [
+      { year: 2014, number: 4788 },
+      { year: 2015, number: 4821 },
+      { year: 2016, number: 6550 },
+      { year: 2017, number: 6125 }
+    ]
+  }
+]
+testdb> db.universities.deleteOne({city:"Mumbai"})
+{ acknowledged: true, deletedCount: 1 }
+testdb> db.universities.find()
+[
+  {
+    _id: ObjectId("643a35f0c5537f658258f0b2"),
+    country: 'India',
+    city: 'Pune',
+    name: 'VIIT',
+    location: { type: 'Point', coordinates: [ -5.6722512, 17, 40.9607792 ] },
+    students: [
+      { year: 2014, number: 24774 },
+      { year: 2015, number: 23166 },
+      { year: 2016, number: 21913 },
+      { year: 2017, number: 21715 }
+    ]
+  },
+  {
+    _id: ObjectId("643a3963c5537f658258f0b8"),
+    country: 'India',
+    city: 'Mumbai',
+    name: 'BitsPillani',
+    location: { type: 'Point', coordinates: [ -5.6691191, 17, 40.9631732 ] },
+    students: [
+      { year: 2014, number: 4788 },
+      { year: 2015, number: 4821 },
+      { year: 2016, number: 6550 },
+      { year: 2017, number: 6125 }
+    ]
+  }
+]
+testdb> db.universities.find({city:"pune"},{country:1, location:1})
+
+testdb> db.universities.find({city:"Pune"},{country:1, location:1})
+[
+  {
+    _id: ObjectId("643a35f0c5537f658258f0b2"),
+    country: 'India',
+    location: { type: 'Point', coordinates: [ -5.6722512, 17, 40.9607792 ] }
+  }
+]
+testdb> db.universities.find({city:"Pune"}).count()
+1
+testdb> db.universities.updateOne({city:"Mumbai"},{ $set : { city:"Pilani" }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+testdb> db.universities.find()
+[
+  {
+    _id: ObjectId("643a35f0c5537f658258f0b2"),
+    country: 'India',
+    city: 'Pune',
+    name: 'VIIT',
+    location: { type: 'Point', coordinates: [ -5.6722512, 17, 40.9607792 ] },
+    students: [
+      { year: 2014, number: 24774 },
+      { year: 2015, number: 23166 },
+      { year: 2016, number: 21913 },
+      { year: 2017, number: 21715 }
+    ]
+  },
+  {
+    _id: ObjectId("643a3963c5537f658258f0b8"),
+    country: 'India',
+    city: 'Pilani',
+    name: 'BitsPillani',
+    location: { type: 'Point', coordinates: [ -5.6691191, 17, 40.9631732 ] },
+    students: [
+      { year: 2014, number: 4788 },
+      { year: 2015, number: 4821 },
+      { year: 2016, number: 6550 },
+      { year: 2017, number: 6125 }
+    ]
+  }
+]
+testdb> db.Employee.find()
+[
+  {
+    _id: ObjectId("643a3e47c5537f658258f0b9"),
+    name: 'nisha',
+    dept: 'comp',
+    sal: 32000
+  },
+  {
+    _id: ObjectId("643a3e67c5537f658258f0bb"),
+    name: 'pooja',
+    dept: 'comp',
+    sal: 40000
+  },
+  {
+    _id: ObjectId("643a3e73c5537f658258f0bc"),
+    name: 'it',
+    dept: 'it',
+    sal: 37000
+  },
+  {
+    _id: ObjectId("643a3e81c5537f658258f0bd"),
+    name: 'rosh',
+    dept: 'it',
+    sal: 32000
+  },
+  {
+    _id: ObjectId("643a3e89c5537f658258f0be"),
+    name: 'rutu',
+    dept: 'etc',
+    sal: 35000
+  }
+]
+testdb> db.universities.find()
+[
+  {
+    _id: ObjectId("643a35f0c5537f658258f0b2"),
+    country: 'India',
+    city: 'Pune',
+    name: 'VIIT',
+    location: { type: 'Point', coordinates: [ -5.6722512, 17, 40.9607792 ] },
+    students: [
+      { year: 2014, number: 24774 },
+      { year: 2015, number: 23166 },
+      { year: 2016, number: 21913 },
+      { year: 2017, number: 21715 }
+    ]
+  },
+  {
+    _id: ObjectId("643a3963c5537f658258f0b8"),
+    country: 'India',
+    city: 'Pilani',
+    name: 'BitsPillani',
+    location: { type: 'Point', coordinates: [ -5.6691191, 17, 40.9631732 ] },
+    students: [
+      { year: 2014, number: 4788 },
+      { year: 2015, number: 4821 },
+      { year: 2016, number: 6550 },
+      { year: 2017, number: 6125 }
+    ]
+  }
+]
+testdb> db.universities.ensureIndex({name:1})
+[ 'name_1' ]
+testdb> db.Employee.aggregate({$group: {_id:"$dept", sumsal : { $sum : "$sal" }}})
+[
+  { _id: 'comp', sumsal: 72000 },
+  { _id: 'it', sumsal: 69000 },
+  { _id: 'etc', sumsal: 35000 }
+]
+testdb> db.Employee.aggregate({$group: {_id:"$dept", sumsal : { $sum : 1 }}})
+[
+  { _id: 'comp', sumsal: 2 },
+  { _id: 'it', sumsal: 2 },
+  { _id: 'etc', sumsal: 1 }
+]
+testdb> db.Employee.aggregate({$group: {_id:"$dept", sumsal : { $count : 1 }}})
+MongoServerError: $count takes no arguments, i.e. $count:{}
+testdb> db.Employee.aggregate({$group: {_id:"$dept", emps : { $count : "$name" }}})
+MongoServerError: $count takes no arguments, i.e. $count:{}
+testdb> db.Employee.aggregate({$group: {_id:"$dept", emps : { $count : {}}}})
+[
+  { _id: 'comp', emps: 2 },
+  { _id: 'it', emps: 2 },
+  { _id: 'etc', emps: 1 }
+]
+testdb> db.Employee.aggregate({$group: { _id: "$dept", maxsal : { $max : "$sal"}}})
+[
+  { _id: 'comp', maxsal: 40000 },
+  { _id: 'it', maxsal: 37000 },
+  { _id: 'etc', maxsal: 35000 }
+]
+testdb> db.collection.getIndexes()
+MongoServerError: ns does not exist: testdb.collection
+testdb> db.Employee.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { sal: -1 }, name: 'sal_-1' },
+  { v: 2, key: { sal: 1 }, name: 'sal_1' }
+]
+testdb> db.universities.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { name: 1 }, name: 'name_1' }
+]
+testdb> db.universities.dropIndex("name_1")
+{ nIndexesWas: 2, ok: 1 }
+testdb> db.universities.getIndexes()
+[ { v: 2, key: { _id: 1 }, name: '_id_' } ]
+testdb> db.universities.createIndex({name:1})
+name_1
+testdb> db.universities.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { name: 1 }, name: 'name_1' }
+]
+testdb> show collections
+cities
+courses
+Employee
+totals
+universities
+testdb> db.courses.find()
+[
+  {
+    _id: ObjectId("643a364cc5537f658258f0b4"),
+    university: 'VIIT',
+    name: 'Computer Science',
+    level: 'Excellent'
+  },
+  {
+    _id: ObjectId("643a364cc5537f658258f0b5"),
+    university: 'VIIT',
+    name: 'Electronics',
+    level: 'Intermediate'
+  },
+  {
+    _id: ObjectId("643a364cc5537f658258f0b6"),
+    university: 'VIIT',
+    name: 'Communication',
+    level: 'Excellent'
+  }
+]
+testdb> db.bills.insertMany({ oid: 1, name: "raj", amt: 15},{ oid: 2, name: "raj", amt: 25}, { oid: 3, name: "viraj", amt: 17},{ oid: 4, name: "viraj", amt: 55}, { oid: 5, name: "viraj", amt: 11},{ oid: 6, name: "tony", amt: 90},{ oid: 7, name: "tony", amt: 34})
+MongoInvalidArgumentError: Argument "docs" must be an array of documents
+testdb> db.bills.insertMany([{ oid: 1, name: "raj", amt: 15},{ oid: 2, name: "raj", amt: 25}, { oid: 3, name: "viraj", amt: 17},{ oid: 4, name: "viraj", amt: 55}, { oid: 5, name: "viraj", amt: 11},{ oid: 6, name: "tony", amt: 90},{ oid: 7, name: "tony", amt: 34}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("645c6b8536362769dbde5b45"),
+    '1': ObjectId("645c6b8536362769dbde5b46"),
+    '2': ObjectId("645c6b8536362769dbde5b47"),
+    '3': ObjectId("645c6b8536362769dbde5b48"),
+    '4': ObjectId("645c6b8536362769dbde5b49"),
+    '5': ObjectId("645c6b8536362769dbde5b4a"),
+    '6': ObjectId("645c6b8536362769dbde5b4b")
+  }
+}
+testdb> var mp = function(){ emit(this.name,this.amt); };
+
+testdb> var rd = function(custName, billAmt){ return Array.sum(billAmt); };
+
+testdb> db.bills.mapReduce(mp,rd,{ out : "totalBills" })
+DeprecationWarning: Collection.mapReduce() is deprecated. Use an aggregation instead.
+See https://docs.mongodb.com/manual/core/map-reduce for details.
+{ result: 'totalBills', ok: 1 }
+testdb> show collections;
+bills
+cities
+courses
+Employee
+totalBills
+totals
+universities
+testdb> db.totalBills.find()
+[
+  { _id: 'viraj', value: 83 },
+  { _id: 'tony', value: 124 },
+  { _id: 'raj', value: 40 }
+]
